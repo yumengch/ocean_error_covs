@@ -83,7 +83,7 @@ class CovStatBinner:
 
         # Process each day
         for day_idx, data in enumerate(data_iterator):
-            self.grid.update_latlon(data)
+            self.grid.update_coord(data)
 
             daily_results = self._process_single_file(day_idx, data, n_sample_obs)
             # Accumulate results
@@ -202,7 +202,7 @@ class CovStatBinner:
             ci = i1 - i0
             chunk_indices_a = {name_a: sample_indices[name_a][i0:i1]}
             chunk_indices_b = {name_b: sample_indices[name_b]}
-            chunk_bin_idx = self.grid.calc_gcd(chunk_indices_a, chunk_indices_b)
+            chunk_bin_idx = self.grid.calc_distance(chunk_indices_a, chunk_indices_b)
 
             n_sample_grid += np.bincount(chunk_bin_idx, minlength=n_grid)
 

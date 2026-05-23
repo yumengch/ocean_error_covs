@@ -57,7 +57,7 @@ class ObsFactory:
             obs_configs[obs_b] = configs[self.obs_name_cfg_map[obs_b]]
             yield obs_configs
 
-    def data_iterator(self, names:list[str]
+    def data_iterator(self, names:list[str], is_horizontal: bool
                       ) -> typing.Iterator[dict[str, dict[str, np.ndarray]]]:
         """Iterator over NetCDF files in the specified mode.
 
@@ -67,7 +67,7 @@ class ObsFactory:
             A dictionary of variable names and their corresponding data arrays.
         """
         # iterator for each data file.
-        self._data_iterator = [self.inputs[name].read() for name in names]
+        self._data_iterator = [self.inputs[name].read(is_horizontal) for name in names]
 
         for v_dict in zip(*self._data_iterator):
             data:dict[str, dict[str, np.ndarray]] = OrderedDict()

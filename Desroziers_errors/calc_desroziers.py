@@ -76,6 +76,7 @@ def calc_desroziers(configfile='config.ini', mask_func=None):
     config_t.load_obs_configs()
 
     estimates = config_t['Uncertainty'].get('estimate', 'R,HBH,R+HBH').split(',')
+    is_horizontal = config_t['Uncertainty'].getboolean('is_horizontal', True)
 
     # create an observation object
     obs_factory = ObsFactory(config_t.obs_configs, estimates)
@@ -85,12 +86,12 @@ def calc_desroziers(configfile='config.ini', mask_func=None):
     for obs_configs in obs_factory.obs_pair_iterator(config_t.obs_configs):
         list_obs_types = list(obs_configs.keys())
         predictor = Predictor(obs_configs)
-        grid = Grid(obs_configs[list_obs_types[0]]['Grid'])
+        grid = Grid(obs_configs[list_obs_types[0]]['Grid'], is_horizontal)
         # Create estimator with only what it needs
         estimator = CovStatBinner(grid, predictor, list_obs_types,
                                   estimates)
         # Pass data iterator to estimator
-        results = estimator.do_binning(obs_factory.data_iterator(list_obs_types))
+        results = estimator.do_binning(obs_factory.data_iterator(list_obs_types, is_horizontal))
         # Save output
         output.save_binned(predictor, grid, results)
 

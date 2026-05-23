@@ -70,12 +70,15 @@ The code reads **NetCDF files** containing observation-space vectors for each as
 
 ### Required variables
 
-Each input file must contain at least:
+Each input file must contain **either** the horizontal coordinate pair **or** a single vertical / 1D coordinate:
 
-| Variable | Description |
-|----------|-------------|
-| `lon` | Observation longitude [degrees] |
-| `lat` | Observation latitude [degrees] |
+| Variable | Description | Mode |
+|----------|-------------|------|
+| `lon` | Observation longitude [degrees] | horizontal (default) |
+| `lat` | Observation latitude [degrees] | horizontal (default) |
+| `vert` | Vertical / along-track coordinate (e.g. depth [m], pressure [hPa]) | vertical (`is_horizontal = False`) |
+
+See [1D / vertical-coordinate mode](#1d--vertical-coordinate-mode) for setup details.
 
 And at least **two** of the three Desroziers difference vectors — the third is derived automatically as the sum or difference of the other two:
 
@@ -127,6 +130,49 @@ lat_name         = lat
 
 ---
 
+## 1D / vertical-coordinate mode
+
+By default the tool works in **horizontal** mode: observation pairs are binned by
+great-circle distance and the output describes spatially resolved error
+correlation functions. To process **one-dimensional data** (e.g. vertical profiles
+indexed by depth or pressure, or any along-track data with a single scalar
+coordinate) set `is_horizontal = False` in the top-level `config.ini`:
+
+```ini
+[Uncertainty]
+estimate        = R, HBH, R+HBH
+is_horizontal   = False   # default is True
+```
+
+In vertical mode:
+
+- Each observation-type `.ini` file must supply `vert_name` instead of `lon_name` / `lat_name`.
+- Observation pairs are binned by the **absolute difference of their `vert` values** rather than great-circle distance.
+- `max_distance` and `distance_interval` in `[Grid]` are interpreted in the **same units as `vert_name`** (e.g. metres if `vert_name` points to a depth variable in metres).
+- The `bins` coordinate in the output files is likewise in those units.
+
+### Example observation config (vertical mode)
+
+```ini
+[Input]
+input_dir        = /path/to/profiles
+filename_format  = profiles_%%Y%%m%%d.nc
+data_freq        = 1D
+data_start       = 2015-02-01T00:00:00.00
+data_end         = 2015-03-01T00:00:00.00
+variables        = d_ob, d_ab, d_oa, depth
+d_ob_name        = d_ob
+d_ab_name        = d_ab
+d_oa_name        = d_oa
+vert_name        = depth
+
+[Grid]
+max_distance      = 500    # metres
+distance_interval = 10     # metres
+```
+
+---
+
 ## Usage
 
 The tool is controlled by a top-level `config.ini` file and one `.ini` file per
@@ -170,7 +216,10 @@ The `mask_func` signature must be:
 
 It must return a boolean `np.ndarray` of length `len(data['lon'])`.
 The variables in data are specified in observation type configuration files.
-It always contains at least ``'lon'`` and ``'lat'``.
+It always contains at least ``'lon'`` and ``'lat'`` or ``'vert'``, and
+``'d_ob_j'``. Depending on the required estimates it can also contain ``'d_oa'``,
+and ``'d_ab'``.
+
 
 #### Example: combined hemisphere and seasonal predictor
 
@@ -319,5 +368,4 @@ are written. The `+` in `R+HBH` is replaced by `_` in all NetCDF variable names
 ## Contirbutions
 
 Feel free to ask questions, or ask for features in issues and make pull request. You can also contact us by email:
-yumeng.chen@reading.ac.uk
-alison
+Yumeng Chen (yumeng.chen@reading.ac.uk) or Alison Fowler (a.m.fowler@reading.ac.uk)

@@ -41,7 +41,7 @@ class Predictor:
         self._rng = np.random.default_rng()
         self.mask_func = mask_func if mask_func is not None else self.get_mask
 
-    def get_mask(self, name:str, data:dict[str, np.ndarray], i:int) -> np.ndarray:
+    def get_mask(self, _name:str, data:dict[str, np.ndarray], i:int) -> np.ndarray:
         """Default mask function for i-th predictor bin.
 
         This function defines a mask that selects all observations.
@@ -66,7 +66,7 @@ class Predictor:
         if 'predictor'in data:
             return data['predictor'] == i
         else:
-            return np.ones(len(data['lon']), dtype=bool)
+            return np.ones(len(data['d_ob_j']), dtype=bool)
 
     def get_sample_indices(
         self, i_day: int, data: dict[str, dict[str, np.ndarray]]

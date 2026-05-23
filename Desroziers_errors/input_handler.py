@@ -13,6 +13,11 @@ import numpy as np
 from . import log
 
 
+class _DerivationSource(typing.TypedDict):
+    d: tuple[str, str]
+    sign: typing.Callable[[np.ndarray, np.ndarray], np.ndarray]
+
+
 class InputHandler:
     """Class to handle input NetCDF files based on configuration.
 
@@ -39,8 +44,9 @@ class InputHandler:
         self.data_start = config.get('data_start', '2018-04-01T00:00:00.00')
         self.data_end = config.get('data_end', '2018-04-01T00:00:00.00')
         self.variables = config.get('variables', '').split(',')
-        self.lon_name = config.get('lon_name', 'lon')
-        self.lat_name = config.get('lat_name', 'lat')
+        self.lon_name = config.get('lon_name', 'lat')
+        self.lat_name = config.get('lat_name', 'lon')
+        self.vert_name = config.get('vert_name', 'vert')
         self.pred_name = config.get('pred_name', None)
 
         # deal with the existence of only two of d_ob, d_oa, d_ab
@@ -53,21 +59,21 @@ class InputHandler:
                 else:
                     self.names[vname+'_j'] = nameval
 
-        derivation_sources = {
+        derivation_sources: dict[str, _DerivationSource] = {
             'd_oa': {'d': ('d_ob_j', 'd_ab'), 'sign': np.subtract},
             'd_ab': {'d': ('d_ob_j', 'd_oa'), 'sign': np.subtract},
             'd_ob_j': {'d': ('d_oa', 'd_ab'), 'sign': np.add}
         }
 
         self._innov_to_read = [vname for vname in d_names if vname in self.names]
-        self._innov_to_derive = {vname: derivation_sources[vname]
+        self._innov_to_derive: dict[str, _DerivationSource] = {vname: derivation_sources[vname]
                                  for vname in d_names
                                  if vname not in self.names}
         self.other_vars = [var for var in self.variables
                            if var not in self._innov_to_read and
-                              var != self.lon_name and
-                              var != self.lat_name and
-                              var != self.pred_name]
+                              var not in [self.lon_name, self.lat_name,
+                                          self.vert_name, self.pred_name]
+                           ]
         # Precompute innovation handling once to keep per-file read loop simple.
         self.fnames = self.get_fnames()
 
@@ -97,7 +103,7 @@ class InputHandler:
                     dt.astype(datetime.datetime).strftime(self.filename_format)
                 )
 
-    def read(self) -> typing.Iterator[dict[str, np.ndarray]]:
+    def read(self, is_horizontal: bool) -> typing.Iterator[dict[str, np.ndarray]]:
         """Read specified variables from a NetCDF file.
 
         The filenames are derived from :py:meth:`input.InputHandler.get_fnames`
@@ -116,8 +122,12 @@ class InputHandler:
             msg = f'Reading {fname}'
             log.logger.info(msg)
             with netCDF4.Dataset(fname, 'r') as dataset: # pylint: disable=no-member
-                data['lon'] = dataset.variables[self.lon_name][:]
-                data['lat'] = dataset.variables[self.lat_name][:]
+                if is_horizontal:
+                    data['lon'] = dataset.variables[self.lon_name][:]
+                    data['lat'] = dataset.variables[self.lat_name][:]
+                else:
+                    data['vert'] = dataset.variables[self.vert_name][:]
+
                 if self.pred_name is not None:
                     data['predictor'] = dataset.variables[self.pred_name][:]
                 for var in self.other_vars:
@@ -131,8 +141,7 @@ class InputHandler:
                     src_a, src_b = self._innov_to_derive[vname]['d']
                     src_a = self.names[src_a]
                     src_b = self.names[src_b]
-                    sign: typing.Callable[[np.ndarray, np.ndarray], np.ndarray] = \
-                        self._innov_to_derive[vname]['sign']
+                    sign = self._innov_to_derive[vname]['sign']
                     data[vname] = sign( dataset.variables[src_a][:], dataset.variables[src_b][:])
 
             yield data
