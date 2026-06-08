@@ -319,22 +319,22 @@ estimator.
 
 | Variable | Shape | Description |
 |----------|-------|-------------|
-| `cov_R` | `(n_predictors, n_grid)` | $\hat{C}[R]$: observation error covariance as a function of separation distance |
-| `cov_HBH` | `(n_predictors, n_grid)` | $\hat{C}[HBH]$: background error covariance in observation space |
-| `cov_R_HBH` | `(n_predictors, n_grid)` | $\hat{C}[R+HBH]$: total error covariance |
-| `std_dev_R` | `(n_predictors,)` | $\sigma_R$: observation error standard deviation (square root of zero-separation covariance) |
-| `std_dev_HBH` | `(n_predictors,)` | $\sigma_{HBH}$: background error standard deviation |
-| `std_dev_R_HBH` | `(n_predictors,)` | $\sigma_{R+HBH}$: total error standard deviation |
-| `corr_R` | `(n_predictors, n_grid)` | $\rho_R$: observation error spatial correlation (smoothed, normalised by `std_dev_R`) |
-| `corr_HBH` | `(n_predictors, n_grid)` | $\rho_{HBH}$: background error spatial correlation |
-| `corr_R_HBH` | `(n_predictors, n_grid)` | $\rho_{R+HBH}$: total error spatial correlation |
+| `cov_R` | `(n_predictors, n_grid)` | observation error covariance as a function of separation distance |
+| `cov_HBH` | `(n_predictors, n_grid)` | background error covariance in observation space |
+| `cov_R_HBH` | `(n_predictors, n_grid)` | sum of observation and background error covariance  |
+| `std_dev_R` | `(n_predictors,)` | observation error standard deviation (square root of zero-separation covariance) |
+| `std_dev_HBH` | `(n_predictors,)` | background error standard deviation |
+| `std_dev_R_HBH` | `(n_predictors,)` | sum of observation and background error standard deviation |
+| `corr_R` | `(n_predictors, n_grid)` | observation error spatial correlation (smoothed, normalised by `std_dev_R`) |
+| `corr_HBH` | `(n_predictors, n_grid)` | background error spatial correlation |
+| `corr_R_HBH` | `(n_predictors, n_grid)` | sum of observation and background error spatial correlation |
 
 **No bias removed** (un-centred cross-product; `HBH` and `R+HBH` only)
 
 | Variable | Shape | Description |
 |----------|-------|-------------|
-| `cov_HBH_no_bias_removed` | `(n_predictors, n_grid)` | $E_{HBH}/(c-1)$ — equals `cov_HBH` plus the mean-product term |
-| `cov_R_HBH_no_bias_removed` | `(n_predictors, n_grid)` | $E_{R+HBH}/(c-1)$ |
+| `cov_HBH_no_bias_removed` | `(n_predictors, n_grid)` | Expectation of the product of `d_ob`*`d_ab` |
+| `cov_R_HBH_no_bias_removed` | `(n_predictors, n_grid)` | Expectation of the product of `d_ob`*`d_ob` |
 | `std_dev_HBH_no_bias_removed` | `(n_predictors,)` | Standard deviation derived from `cov_HBH_no_bias_removed` |
 | `std_dev_R_HBH_no_bias_removed` | `(n_predictors,)` | Standard deviation derived from `cov_R_HBH_no_bias_removed` |
 | `corr_HBH_no_bias_removed` | `(n_predictors, n_grid)` | Correlation derived from `cov_HBH_no_bias_removed` |
@@ -344,8 +344,8 @@ estimator.
 
 | Variable | Shape | Description |
 |----------|-------|-------------|
-| `cov_HBH_with_innov_bias` | `(n_predictors, n_grid)` | $\hat{C}[HBH] + c\,\bar{d}_{ob}^2/(c-1)$ — treats the innovation bias as signal |
-| `cov_R_HBH_with_innov_bias` | `(n_predictors, n_grid)` | Same correction applied to $\hat{C}[R+HBH]$ |
+| `cov_HBH_with_innov_bias` | `(n_predictors, n_grid)` | `cov_HBH` with mean innovation as bias |
+| `cov_R_HBH_with_innov_bias` | `(n_predictors, n_grid)` | `cov_R_HBH` with mean innovation as bias |
 | `std_dev_HBH_with_innov_bias` | `(n_predictors,)` | Standard deviation derived from `cov_HBH_with_innov_bias` |
 | `std_dev_R_HBH_with_innov_bias` | `(n_predictors,)` | Standard deviation derived from `cov_R_HBH_with_innov_bias` |
 | `corr_HBH_with_innov_bias` | `(n_predictors, n_grid)` | Correlation derived from `cov_HBH_with_innov_bias` |

@@ -88,7 +88,7 @@ $$
 \left(E_v - \frac{S^i_{ob}S^j_w}{c}\right)
 $$
 
-where $v \in \{R,\, HBH,\, R+HBH\}$ and $S^j_w$ is the corresponding
+where $v \in \{R, HBH, R+HBH\}$ and $S^j_w$ is the corresponding
 accumulation sum at the $j$ point ($S_{oa}$, $S_{ab}$, or $S^j_{ob}$
 respectively). This is the primary estimate written to `cov_R`, `cov_HBH`, and
 `cov_R_HBH`.
@@ -133,7 +133,7 @@ were treated as a signal rather than removed. Only computed for `HBH` and
 The bias at zero separation ($k = 0$) for each innovation vector is:
 
 $$
-\text{bias}_v[s] = \frac{S^j_v[s,\, 0]}{c[s,\, 0]}
+\text{bias}_v[s] = \frac{S^j_v[s, 0]}{c[s, 0]}
 $$
 
 This is the **mean** of the respective innovation/residual variable across
@@ -154,7 +154,7 @@ standard deviation and the raw (unsmoothed) normalised spatial correlation for
 distance bin $k$ are:
 
 $$
-\sigma_v[s] = \sqrt{\hat{C}[v]_{s,\,0}}
+\sigma_v[s] = \sqrt{\hat{C}[v]_{s,0}}
 $$
 
 $$
