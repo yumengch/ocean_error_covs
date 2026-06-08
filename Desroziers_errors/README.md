@@ -1,7 +1,7 @@
 # Desroziers Diagnostics for Ocean Data Assimilation
 
-The functions here is used to estimate error variances and spatial correlations of observation
-and background errpr in ocean data assimilation systems using
+The functions here are used to estimate error variances and spatial correlations of observation
+and background error in ocean data assimilation systems using
 [Desroziers' statistics](https://doi.org/10.1256/qj.05.108). The implementation is based on
 
 Fowler, A.M., Skákala, J. & Ford, D.(2023) Validating and improving the uncertainty assumptions for the assimilation of ocean-colour-derived chlorophyll a into a marine biogeochemistry model of the Northwest European Shelf Seas. Quarterly Journal of the Royal Meteorological Society, 149(750), 300–324. Available from: https://doi.org/10.1002/qj.4408
@@ -176,7 +176,7 @@ distance_interval = 10     # metres
 ## Usage
 
 The tool is controlled by a top-level `config.ini` file and one `.ini` file per
-observation type. See [configs/configuration.md](configs/configuration.md) for a full
+observation type. See [configs/README.md](configs/README.md) for a full
 reference before getting started.
 
 ### Python API
@@ -365,7 +365,7 @@ are written. The `+` in `R+HBH` is replaced by `_` in all NetCDF variable names
 
 ---
 
-## Contirbutions
+## Contributions
 
 Feel free to ask questions, or ask for features in issues and make pull request. You can also contact us by email:
 Yumeng Chen (yumeng.chen@reading.ac.uk) or Alison Fowler (a.m.fowler@reading.ac.uk)

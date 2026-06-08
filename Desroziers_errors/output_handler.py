@@ -81,7 +81,7 @@ class OutputHandler:
 
         longnames = {'HBH': "Sum of (y-H(xb))*(H(xa)-H(xb).T",
                      'R': "Sum of (y-H(xb))*(y-H(xa)).T",
-                     'R+HBH': "Sum of (y-H(xb))*(y-H(xb)).T",
+                     'R_HBH': "Sum of (y-H(xb))*(y-H(xb)).T",
                      }
         for v in results.err_sum:
             nc_var = dataset.createVariable(v, np.float32, ('n_predictors','n_grid'))

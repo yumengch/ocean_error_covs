@@ -44,8 +44,8 @@ class InputHandler:
         self.data_start = config.get('data_start', '2018-04-01T00:00:00.00')
         self.data_end = config.get('data_end', '2018-04-01T00:00:00.00')
         self.variables = config.get('variables', '').split(',')
-        self.lon_name = config.get('lon_name', 'lat')
-        self.lat_name = config.get('lat_name', 'lon')
+        self.lon_name = config.get('lon_name', 'lon')
+        self.lat_name = config.get('lat_name', 'lat')
         self.vert_name = config.get('vert_name', 'vert')
         self.pred_name = config.get('pred_name', None)
 

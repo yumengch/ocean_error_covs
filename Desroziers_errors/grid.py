@@ -3,7 +3,6 @@
 Author: Y Chen, University of Reading, 2025
 """
 import configparser
-from unicodedata import name
 
 import numpy as np
 

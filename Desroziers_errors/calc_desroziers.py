@@ -85,7 +85,7 @@ def calc_desroziers(configfile='config.ini', mask_func=None):
     # Create components
     for obs_configs in obs_factory.obs_pair_iterator(config_t.obs_configs):
         list_obs_types = list(obs_configs.keys())
-        predictor = Predictor(obs_configs)
+        predictor = Predictor(obs_configs, mask_func=mask_func)
         grid = Grid(obs_configs[list_obs_types[0]]['Grid'], is_horizontal)
         # Create estimator with only what it needs
         estimator = CovStatBinner(grid, predictor, list_obs_types,

@@ -279,7 +279,7 @@ class CorrEstimator:
         """
         n_state, n_grid = results.n_obs_bin.shape
         est = self._init_estimate_dict(n_state, n_grid)
-        sdev = {v: np.zeros((n_state, n_grid)) for v in est}
+        sdev = {v: np.zeros((n_state)) for v in est}
         corr = {v: np.zeros((n_state, n_grid)) for v in est}
         bias = {v: np.zeros(n_state) for v in self.innovs}
 
